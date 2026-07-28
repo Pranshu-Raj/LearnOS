@@ -1,17 +1,13 @@
 {
-  "name": "sticky-widget",
+  "name": "learnos-desktop-widget",
   "version": "1.0.0",
-  "description": "",
+  "description": "LearnOS Desktop Focus Widget",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "devDependencies": {
     "electron": "^43.2.0",
-    "js-yaml": "^5.2.2"
+    "js-yaml": "^4.1.0"
   }
 }

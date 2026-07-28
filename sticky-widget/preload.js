@@ -1,7 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('api', {
-    getTopics: () => ipcRenderer.invoke('get-topics'),
-    updateTopic: (filename, newFm) => ipcRenderer.invoke('update-topic', { filename, newFm }),
-    closeApp: () => window.close() 
+contextBridge.exposeInMainWorld('widgetAPI', {
+  getVaultTopics: () => ipcRenderer.invoke('get-vault-topics'),
+  updateTopicFrontmatter: (filename, updates) => ipcRenderer.invoke('update-topic-frontmatter', { filename, updates }),
+  triggerReplan: () => ipcRenderer.invoke('trigger-replan'),
+  closeApp: () => ipcRenderer.invoke('close-app'),
+  minimizeApp: () => ipcRenderer.invoke('minimize-app')
 });

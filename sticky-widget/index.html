@@ -1,20 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Vault Coach Sticky</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>LearnOS Focus Widget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="drag-handle">
-        <span>Vault Coach</span>
-        <button id="close-btn">×</button>
-    </div>
+  <div class="widget-container">
     
-    <div id="content" class="content">
-        <!-- JS will inject content here -->
+    <!-- Top Header (Draggable) -->
+    <header class="app-header draggable">
+      <div class="brand">
+        <span class="material-symbols-outlined brand-icon">auto_stories</span>
+        <span class="brand-title">LearnOS Focus</span>
+      </div>
+      <div class="window-actions non-draggable">
+        <button id="replan-btn" class="icon-btn" title="AI Re-Plan Schedule"><span class="material-symbols-outlined">auto_fix_high</span></button>
+        <button id="refresh-btn" class="icon-btn" title="Refresh Vault"><span class="material-symbols-outlined">refresh</span></button>
+        <button id="minimize-btn" class="icon-btn" title="Minimize"><span class="material-symbols-outlined">minimize</span></button>
+        <button id="close-btn" class="icon-btn close-btn" title="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+    </header>
+
+    <!-- Active Topic Card -->
+    <section id="topic-card" class="topic-card">
+      <div class="topic-header">
+        <span id="topic-badge" class="badge">In Progress</span>
+        <span id="pace-chip" class="chip pace-chip"><span class="material-symbols-outlined chip-icon">speed</span> 1.0x Pace</span>
+        <span id="topic-estimate" class="chip"><span class="material-symbols-outlined chip-icon">schedule</span> 180 min</span>
+      </div>
+      <h2 id="topic-title" class="topic-title">Loading vault topics...</h2>
+      
+      <!-- Progress Bar -->
+      <div class="progress-wrapper">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+        <span id="progress-text" class="progress-text">0 / 0 topics</span>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Pane 1: Tasks Checklist -->
+      <div id="tasks-pane" class="pane active">
+        <div class="pane-header">
+          <span class="pane-title">Topic Tasks</span>
+          <span id="review-due-count" class="chip review-chip hidden"><span class="material-symbols-outlined chip-icon">update</span> 1 Due</span>
+        </div>
+        <div id="tasks-list" class="tasks-list">
+          <!-- Tasks dynamically rendered here -->
+        </div>
+      </div>
+
+      <!-- Pane 2: Minimalist Pomodoro Timer -->
+      <div id="timer-pane" class="pane hidden">
+        <div class="timer-card">
+          <div id="timer-display" class="timer-display">25:00</div>
+          <div class="timer-controls">
+            <button id="timer-toggle-btn" class="fab-btn primary" title="Start / Pause">
+              <span class="material-symbols-outlined fab-icon">play_arrow</span>
+            </button>
+            <button id="timer-reset-btn" class="icon-btn-lg" title="Reset Timer">
+              <span class="material-symbols-outlined">restart_alt</span>
+            </button>
+            <button id="timer-add-btn" class="icon-btn-lg" title="+5 Minutes">
+              <span class="material-symbols-outlined">more_time</span>
+            </button>
+          </div>
+          <button id="log-time-btn" class="log-btn">
+            <span class="material-symbols-outlined">check_circle</span> Complete & Log Session
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Rating Modal Overlay (Spaced Repetition Feedback) -->
+    <div id="rating-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon"><span class="material-symbols-outlined">psychology</span></div>
+        <h3 class="modal-title">How was your recall?</h3>
+        <p class="modal-subtitle">Rate how well you recalled this topic to schedule your next review interval.</p>
+        <div class="modal-actions">
+          <button id="rate-solid-btn" class="rating-btn solid">
+            <span class="material-symbols-outlined">thumb_up</span> Solid (+Interval)
+          </button>
+          <button id="rate-shaky-btn" class="rating-btn shaky">
+            <span class="material-symbols-outlined">history</span> Shaky (Reset 1 Day)
+          </button>
+        </div>
+      </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav non-draggable">
+      <button id="nav-tasks-btn" class="nav-item active">
+        <span class="material-symbols-outlined">checklist</span>
+        <span class="nav-label">Tasks</span>
+      </button>
+      <button id="nav-timer-btn" class="nav-item">
+        <span class="material-symbols-outlined">timer</span>
+        <span class="nav-label">Focus Timer</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="renderer.js"></script>
 </body>
 </html>
