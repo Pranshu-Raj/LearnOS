@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+__pycache__/
+env/
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+.env.local
+
+# Vaults and generated content
+TestVault/
+Curriculum.md
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Project planning docs and status
+01_*.md
+02_*.md
+03_*.md
+04_*.md
+05_*.md
+06_*.md
+status.md

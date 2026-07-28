@@ -1,0 +1,10 @@
+{
+  "id": "vault-coach",
+  "name": "Vault Coach",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "An autonomous AI learning planner and tutor.",
+  "author": "LearnOS",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
