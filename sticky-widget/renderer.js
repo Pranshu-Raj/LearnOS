@@ -1,4 +1,4 @@
-// Material Design Focus Widget Renderer - Phase 5 Pace Analytics & AI Re-Plan
+// Material Design Focus Widget Renderer - Multimodal Vision Ingestion Support
 
 let topicsData = [];
 let activeTopicIndex = -1;
@@ -58,6 +58,32 @@ replanBtn.addEventListener('click', async () => {
     console.error("Re-plan failed:", e);
   } finally {
     replanBtn.disabled = false;
+  }
+});
+
+// Drag and Drop Image Handler for Daily Planner Photos
+document.addEventListener('dragover', (e) => {
+  e.preventDefault();
+});
+
+document.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length > 0) {
+    const file = e.dataTransfer.files[0];
+    const ext = file.name.toLowerCase();
+    if (ext.endsWith('.png') || ext.endsWith('.jpg') || ext.endsWith('.jpeg') || ext.endsWith('.webp')) {
+      topicTitleEl.innerText = "📷 Processing daily planner image...";
+      try {
+        const res = await window.widgetAPI.parsePlannerImage(file.path);
+        if (res.status === 'success') {
+          await loadVaultData();
+        } else {
+          alert(`Image Ingestion Error: ${res.error || 'Failed to parse planner'}`);
+        }
+      } catch (err) {
+        console.error("Image parsing failed:", err);
+      }
+    }
   }
 });
 
@@ -196,7 +222,7 @@ async function loadVaultData() {
     topicBadgeEl.innerText = "Empty";
     progressFillEl.style.width = "0%";
     progressTextEl.innerText = "0 / 0 topics";
-    tasksListEl.innerHTML = '<p style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; text-align: center; padding: 20px 0;">Generate a curriculum first using cli.py</p>';
+    tasksListEl.innerHTML = '<p style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; text-align: center; padding: 20px 0;">Drop a planner image (.jpg/.png) or run cli_vision.py</p>';
     return;
   }
 

@@ -119,6 +119,21 @@ ipcMain.handle('trigger-replan', () => {
   });
 });
 
+ipcMain.handle('parse-planner-image', (event, imagePath) => {
+  return new Promise((resolve) => {
+    const scriptPath = path.join(__dirname, '../scripts/cli_vision.py');
+    const projectRoot = path.join(__dirname, '..');
+    exec(`python "${scriptPath}" "${imagePath}" TestVault`, { cwd: projectRoot }, (error, stdout, stderr) => {
+      if (error) {
+        console.error('Vision parsing error:', error, stderr);
+        resolve({ status: 'error', error: stderr || error.message });
+      } else {
+        resolve({ status: 'success', output: stdout });
+      }
+    });
+  });
+});
+
 ipcMain.handle('close-app', () => {
   if (mainWindow) mainWindow.close();
 });
