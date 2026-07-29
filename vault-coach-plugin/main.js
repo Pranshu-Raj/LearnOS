@@ -19,18 +19,20 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/main.ts
 var main_exports = {};
 __export(main_exports, {
+  DEFAULT_SETTINGS: () => DEFAULT_SETTINGS,
   default: () => VaultCoachPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian2 = require("obsidian");
+var import_obsidian3 = require("obsidian");
 
 // src/VaultCoachView.ts
 var import_obsidian = require("obsidian");
 var VIEW_TYPE_VAULT_COACH = "vault-coach-view";
 var VaultCoachView = class extends import_obsidian.ItemView {
-  constructor(leaf) {
+  constructor(leaf, plugin) {
     super(leaf);
     this.timerInterval = null;
+    this.plugin = plugin;
   }
   getViewType() {
     return VIEW_TYPE_VAULT_COACH;
@@ -43,9 +45,27 @@ var VaultCoachView = class extends import_obsidian.ItemView {
     this.registerEvent(this.app.metadataCache.on("changed", () => this.render()));
   }
   async render() {
+    var _a, _b, _c, _d;
     const container = this.containerEl.children[1];
     container.empty();
     container.createEl("h2", { text: "Vault Coach" });
+    const currentProvider = ((_a = this.plugin.settings) == null ? void 0 : _a.visionProvider) || "gemini";
+    let keyConfigured = false;
+    if (currentProvider === "gemini")
+      keyConfigured = !!((_b = this.plugin.settings) == null ? void 0 : _b.geminiApiKey);
+    else if (currentProvider === "groq")
+      keyConfigured = !!((_c = this.plugin.settings) == null ? void 0 : _c.groqApiKey);
+    else if (currentProvider === "openrouter")
+      keyConfigured = !!((_d = this.plugin.settings) == null ? void 0 : _d.openrouterApiKey);
+    if (!keyConfigured) {
+      const warningBox = container.createDiv();
+      warningBox.style.padding = "10px";
+      warningBox.style.marginBottom = "15px";
+      warningBox.style.borderRadius = "5px";
+      warningBox.style.backgroundColor = "var(--background-secondary-alt)";
+      warningBox.style.border = "1px solid var(--text-warning)";
+      warningBox.createEl("p", { text: `\u26A0\uFE0F API Key not configured for selected provider (${currentProvider.toUpperCase()}). Please open Plugin Settings to configure your API key.` });
+    }
     const curriculumFile = this.app.vault.getAbstractFileByPath("Curriculum.md");
     if (!curriculumFile || !(curriculumFile instanceof import_obsidian.TFile)) {
       container.createEl("p", { text: "Curriculum.md not found. Please generate a curriculum first." });
@@ -105,10 +125,12 @@ var VaultCoachView = class extends import_obsidian.ItemView {
     }
   }
   renderTimer(container, topic) {
+    var _a;
     container.empty();
     container.createEl("h2", { text: "Focus Mode" });
     container.createEl("h4", { text: topic.fm.topic });
-    const estimatedMinutes = topic.fm.estimated_minutes || 25;
+    const defaultMins = ((_a = this.plugin.settings) == null ? void 0 : _a.defaultPomodoroMinutes) || 25;
+    const estimatedMinutes = topic.fm.estimated_minutes || defaultMins;
     let secondsRemaining = estimatedMinutes * 60;
     let isRunning = false;
     const timerDisplay = container.createEl("div", { text: this.formatTime(secondsRemaining) });
@@ -172,18 +194,77 @@ var VaultCoachView = class extends import_obsidian.ItemView {
   }
 };
 
+// src/VaultCoachSettingTab.ts
+var import_obsidian2 = require("obsidian");
+var VaultCoachSettingTab = class extends import_obsidian2.PluginSettingTab {
+  constructor(app, plugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+  display() {
+    const { containerEl } = this;
+    containerEl.empty();
+    containerEl.createEl("h2", { text: "Vault Coach Settings" });
+    containerEl.createEl("h3", { text: "API Credentials (BYOK)" });
+    new import_obsidian2.Setting(containerEl).setName("Gemini API Key").setDesc("Enter your Google Gemini API Key for vision OCR and curriculum generation.").addText((text) => text.setPlaceholder("AIzaSy...").setValue(this.plugin.settings.geminiApiKey).onChange(async (value) => {
+      this.plugin.settings.geminiApiKey = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian2.Setting(containerEl).setName("Groq API Key").setDesc("Enter your Groq API Key for fast vision parsing fallback.").addText((text) => text.setPlaceholder("gsk_...").setValue(this.plugin.settings.groqApiKey).onChange(async (value) => {
+      this.plugin.settings.groqApiKey = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian2.Setting(containerEl).setName("OpenRouter API Key").setDesc("Enter your OpenRouter API Key for free Vision Llama models.").addText((text) => text.setPlaceholder("sk-or-...").setValue(this.plugin.settings.openrouterApiKey).onChange(async (value) => {
+      this.plugin.settings.openrouterApiKey = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian2.Setting(containerEl).setName("Default Vision Provider").setDesc("Select your preferred AI model provider for planner OCR parsing.").addDropdown((dropdown) => dropdown.addOption("gemini", "Google Gemini Vision").addOption("groq", "Groq Llama 3.2 Vision").addOption("openrouter", "OpenRouter Free Vision").setValue(this.plugin.settings.visionProvider).onChange(async (value) => {
+      this.plugin.settings.visionProvider = value;
+      await this.plugin.saveSettings();
+    }));
+    containerEl.createEl("h3", { text: "Study & Revision Preferences" });
+    new import_obsidian2.Setting(containerEl).setName("Default Pomodoro Duration (Minutes)").setDesc("Standard focus session duration in minutes.").addText((text) => text.setPlaceholder("25").setValue(this.plugin.settings.defaultPomodoroMinutes.toString()).onChange(async (value) => {
+      const parsed = parseInt(value, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        this.plugin.settings.defaultPomodoroMinutes = parsed;
+        await this.plugin.saveSettings();
+      }
+    }));
+    new import_obsidian2.Setting(containerEl).setName("Spaced Repetition Intervals (Days)").setDesc("Comma-separated list of revision intervals (e.g. 1, 3, 7, 16, 35).").addText((text) => text.setPlaceholder("1, 3, 7, 16, 35").setValue(this.plugin.settings.revisionIntervals).onChange(async (value) => {
+      this.plugin.settings.revisionIntervals = value.trim();
+      await this.plugin.saveSettings();
+    }));
+  }
+};
+
 // src/main.ts
-var VaultCoachPlugin = class extends import_obsidian2.Plugin {
+var DEFAULT_SETTINGS = {
+  geminiApiKey: "",
+  groqApiKey: "",
+  openrouterApiKey: "",
+  visionProvider: "gemini",
+  defaultPomodoroMinutes: 25,
+  revisionIntervals: "1, 3, 7, 16, 35"
+};
+var VaultCoachPlugin = class extends import_obsidian3.Plugin {
   async onload() {
+    await this.loadSettings();
     this.registerView(
       VIEW_TYPE_VAULT_COACH,
-      (leaf) => new VaultCoachView(leaf)
+      (leaf) => new VaultCoachView(leaf, this)
     );
     this.addRibbonIcon("graduation-cap", "Open Vault Coach", () => {
       this.activateView();
     });
+    this.addSettingTab(new VaultCoachSettingTab(this.app, this));
   }
   async onunload() {
+  }
+  async loadSettings() {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+  }
+  async saveSettings() {
+    await this.saveData(this.settings);
   }
   async activateView() {
     const { workspace } = this.app;

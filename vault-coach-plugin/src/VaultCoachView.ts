@@ -1,12 +1,15 @@
 import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
+import VaultCoachPlugin from "./main";
 
 export const VIEW_TYPE_VAULT_COACH = "vault-coach-view";
 
 export class VaultCoachView extends ItemView {
+    plugin: VaultCoachPlugin;
     timerInterval: NodeJS.Timeout | null = null;
 
-    constructor(leaf: WorkspaceLeaf) {
+    constructor(leaf: WorkspaceLeaf, plugin: VaultCoachPlugin) {
         super(leaf);
+        this.plugin = plugin;
     }
 
     getViewType() {
@@ -28,6 +31,23 @@ export class VaultCoachView extends ItemView {
         container.empty();
         
         container.createEl("h2", { text: "Vault Coach" });
+
+        // Show API Credentials Banner if no key is set for selected provider
+        const currentProvider = this.plugin.settings?.visionProvider || 'gemini';
+        let keyConfigured = false;
+        if (currentProvider === 'gemini') keyConfigured = !!this.plugin.settings?.geminiApiKey;
+        else if (currentProvider === 'groq') keyConfigured = !!this.plugin.settings?.groqApiKey;
+        else if (currentProvider === 'openrouter') keyConfigured = !!this.plugin.settings?.openrouterApiKey;
+
+        if (!keyConfigured) {
+            const warningBox = container.createDiv();
+            warningBox.style.padding = "10px";
+            warningBox.style.marginBottom = "15px";
+            warningBox.style.borderRadius = "5px";
+            warningBox.style.backgroundColor = "var(--background-secondary-alt)";
+            warningBox.style.border = "1px solid var(--text-warning)";
+            warningBox.createEl("p", { text: `⚠️ API Key not configured for selected provider (${currentProvider.toUpperCase()}). Please open Plugin Settings to configure your API key.` });
+        }
 
         const curriculumFile = this.app.vault.getAbstractFileByPath("Curriculum.md");
         if (!curriculumFile || !(curriculumFile instanceof TFile)) {
@@ -110,7 +130,8 @@ export class VaultCoachView extends ItemView {
         container.createEl("h2", { text: "Focus Mode" });
         container.createEl("h4", { text: topic.fm.topic });
         
-        const estimatedMinutes = topic.fm.estimated_minutes || 25;
+        const defaultMins = this.plugin.settings?.defaultPomodoroMinutes || 25;
+        const estimatedMinutes = topic.fm.estimated_minutes || defaultMins;
         let secondsRemaining = estimatedMinutes * 60;
         let isRunning = false;
         

@@ -17,16 +17,11 @@ Curriculum.md
 .DS_Store
 Thumbs.db
 
-# Project planning docs and status
-01_*.md
-02_*.md
-03_*.md
-04_*.md
-05_*.md
-06_*.md
-status.md
+# Markdown files
+*.md
 
 # Temporary text extractions, text files, and images
 *.txt
 *.png
+
 

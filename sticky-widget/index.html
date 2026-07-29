@@ -19,6 +19,7 @@
         <span class="brand-title">LearnOS Focus</span>
       </div>
       <div class="window-actions non-draggable">
+        <button id="settings-btn" class="icon-btn" title="Settings & API Keys"><span class="material-symbols-outlined">settings</span></button>
         <button id="qr-btn" class="icon-btn" title="Phone Upload QR Code"><span class="material-symbols-outlined">smartphone</span></button>
         <button id="replan-btn" class="icon-btn" title="AI Re-Plan Schedule"><span class="material-symbols-outlined">auto_fix_high</span></button>
         <button id="refresh-btn" class="icon-btn" title="Refresh Vault"><span class="material-symbols-outlined">refresh</span></button>
@@ -110,6 +111,35 @@
             <span class="material-symbols-outlined">history</span> Shaky (Reset 1 Day)
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal Overlay -->
+    <div id="settings-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon"><span class="material-symbols-outlined">key</span></div>
+        <h3 class="modal-title">⚙️ API Settings (BYOK)</h3>
+        <p class="modal-subtitle">Keys are saved locally in your browser storage and never sent to remote servers.</p>
+        
+        <div class="settings-form" style="text-align: left; width: 100%; margin-top: 10px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">Preferred Vision Provider:</label>
+          <select id="setting-provider" style="width: 100%; margin-bottom: 10px; padding: 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+            <option value="gemini">Google Gemini Vision</option>
+            <option value="groq">Groq Llama 3.2 Vision</option>
+            <option value="openrouter">OpenRouter Free Vision</option>
+          </select>
+
+          <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">Gemini API Key:</label>
+          <input type="password" id="setting-gemini-key" placeholder="AIzaSy..." style="width: 100%; margin-bottom: 10px; padding: 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+
+          <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">Groq API Key:</label>
+          <input type="password" id="setting-groq-key" placeholder="gsk_..." style="width: 100%; margin-bottom: 10px; padding: 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+
+          <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">OpenRouter API Key:</label>
+          <input type="password" id="setting-openrouter-key" placeholder="sk-or-..." style="width: 100%; margin-bottom: 15px; padding: 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+        </div>
+
+        <button id="save-settings-btn" class="rating-btn solid" style="width: 100%;">Save Settings</button>
       </div>
     </div>
 

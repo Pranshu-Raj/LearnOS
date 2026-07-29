@@ -460,5 +460,44 @@ async function completeSessionWithRating(rating) {
   }
 }
 
+// Settings Modal Controls
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const saveSettingsBtn = document.getElementById('save-settings-btn');
+const settingProvider = document.getElementById('setting-provider');
+const settingGeminiKey = document.getElementById('setting-gemini-key');
+const settingGroqKey = document.getElementById('setting-groq-key');
+const settingOpenrouterKey = document.getElementById('setting-openrouter-key');
+
+function loadSettings() {
+  const settings = JSON.parse(localStorage.getItem('learnos_settings') || '{}');
+  if (settingProvider && settings.visionProvider) settingProvider.value = settings.visionProvider;
+  if (settingGeminiKey && settings.geminiApiKey) settingGeminiKey.value = settings.geminiApiKey;
+  if (settingGroqKey && settings.groqApiKey) settingGroqKey.value = settings.groqApiKey;
+  if (settingOpenrouterKey && settings.openrouterApiKey) settingOpenrouterKey.value = settings.openrouterApiKey;
+}
+
+if (settingsBtn) {
+  settingsBtn.addEventListener('click', () => {
+    loadSettings();
+    settingsModal.classList.remove('hidden');
+  });
+}
+
+if (saveSettingsBtn) {
+  saveSettingsBtn.addEventListener('click', () => {
+    const settings = {
+      visionProvider: settingProvider.value,
+      geminiApiKey: settingGeminiKey.value.trim(),
+      groqApiKey: settingGroqKey.value.trim(),
+      openrouterApiKey: settingOpenrouterKey.value.trim()
+    };
+    localStorage.setItem('learnos_settings', JSON.stringify(settings));
+    settingsModal.classList.add('hidden');
+  });
+}
+
 // Initial Load
+loadSettings();
 loadVaultData();
+
