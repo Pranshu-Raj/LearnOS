@@ -1,4 +1,4 @@
-// Material Design Focus Widget Renderer - Multimodal Vision Ingestion Support
+// Material Design Focus Widget Renderer - Multimodal Vision & Mobile QR Code Support
 
 let topicsData = [];
 let activeTopicIndex = -1;
@@ -34,6 +34,10 @@ const ratingModal = document.getElementById('rating-modal');
 const rateSolidBtn = document.getElementById('rate-solid-btn');
 const rateShakyBtn = document.getElementById('rate-shaky-btn');
 
+const qrModal = document.getElementById('qr-modal');
+const qrBtn = document.getElementById('qr-btn');
+const closeQrBtn = document.getElementById('close-qr-btn');
+
 const replanBtn = document.getElementById('replan-btn');
 const refreshBtn = document.getElementById('refresh-btn');
 const minimizeBtn = document.getElementById('minimize-btn');
@@ -43,6 +47,24 @@ const closeBtn = document.getElementById('close-btn');
 closeBtn.addEventListener('click', () => window.widgetAPI.closeApp());
 minimizeBtn.addEventListener('click', () => window.widgetAPI.minimizeApp());
 refreshBtn.addEventListener('click', () => loadVaultData());
+
+// QR Code Modal Controls
+qrBtn.addEventListener('click', async () => {
+  qrModal.classList.remove('hidden');
+  try {
+    const res = await fetch('http://127.0.0.1:5000/status');
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById('qr-url-text').innerText = data.upload_url;
+      document.getElementById('qr-img').src = 'qr_code.png?' + Date.now();
+    }
+  } catch (e) {
+    document.getElementById('qr-url-text').innerText = 'Start mobile_server.py first!';
+  }
+});
+closeQrBtn.addEventListener('click', () => {
+  qrModal.classList.add('hidden');
+});
 
 replanBtn.addEventListener('click', async () => {
   topicTitleEl.innerText = "🤖 Re-planning schedule with AI...";
@@ -222,7 +244,7 @@ async function loadVaultData() {
     topicBadgeEl.innerText = "Empty";
     progressFillEl.style.width = "0%";
     progressTextEl.innerText = "0 / 0 topics";
-    tasksListEl.innerHTML = '<p style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; text-align: center; padding: 20px 0;">Drop a planner image (.jpg/.png) or run cli_vision.py</p>';
+    tasksListEl.innerHTML = '<p style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; text-align: center; padding: 20px 0;">Snap a photo on phone via QR code or run mobile_server.py</p>';
     return;
   }
 

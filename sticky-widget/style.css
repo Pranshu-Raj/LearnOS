@@ -360,14 +360,14 @@ html, body {
   background: rgba(208, 188, 255, 0.25);
 }
 
-/* Rating Modal Overlay */
+/* Modals */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 340px;
   height: 460px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -415,7 +415,26 @@ html, body {
   font-size: 11px;
   color: var(--md-sys-color-on-surface-variant);
   line-height: 1.4;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+.qr-img-wrapper {
+  background: #F5EDE0;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.qr-img-wrapper img {
+  width: 140px;
+  height: 140px;
+  display: block;
+}
+
+.qr-url {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
 }
 
 .modal-actions {

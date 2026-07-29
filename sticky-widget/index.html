@@ -19,6 +19,7 @@
         <span class="brand-title">LearnOS Focus</span>
       </div>
       <div class="window-actions non-draggable">
+        <button id="qr-btn" class="icon-btn" title="Phone Upload QR Code"><span class="material-symbols-outlined">smartphone</span></button>
         <button id="replan-btn" class="icon-btn" title="AI Re-Plan Schedule"><span class="material-symbols-outlined">auto_fix_high</span></button>
         <button id="refresh-btn" class="icon-btn" title="Refresh Vault"><span class="material-symbols-outlined">refresh</span></button>
         <button id="minimize-btn" class="icon-btn" title="Minimize"><span class="material-symbols-outlined">minimize</span></button>
@@ -80,6 +81,20 @@
       </div>
 
     </main>
+
+    <!-- QR Code Modal Overlay -->
+    <div id="qr-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon"><span class="material-symbols-outlined">qr_code_scanner</span></div>
+        <h3 class="modal-title">📱 Phone Upload</h3>
+        <p class="modal-subtitle">Scan this QR code with your phone camera on Wi-Fi to snap & upload planner photos!</p>
+        <div class="qr-img-wrapper">
+          <img id="qr-img" src="qr_code.png" alt="Scan QR Code" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'><text x=\'10\' y=\'60\' fill=\'%23A8C7FA\'>Run mobile_server.py</text></svg>'">
+        </div>
+        <p id="qr-url-text" class="qr-url">http://192.168.x.x:5000</p>
+        <button id="close-qr-btn" class="rating-btn solid" style="margin-top: 10px;">Close</button>
+      </div>
+    </div>
 
     <!-- Rating Modal Overlay (Spaced Repetition Feedback) -->
     <div id="rating-modal" class="modal-overlay hidden">
